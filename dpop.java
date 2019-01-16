@@ -1,4 +1,12 @@
-import java.util.*; 
+import org.apache.poi.ss.usermodel.*;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class dpop {
 	int dpop[][];
 	int help[][];
@@ -80,7 +88,7 @@ public class dpop {
 	public void STARS() {
 		int[] preRestrictions= {10};
 		int maxPerSlot=2;
-		int maxPerVol=2;
+		int maxPerVol=4;
 		int duration=2;//two slots so 60 minutes
 		assignOptional(STARTimes,maxPerSlot,10,preRestrictions,maxPerVol,duration);
 	}
@@ -90,7 +98,7 @@ public class dpop {
 		int maxPerVol=3;
 		int duration=1;
 		int assignmentNumber=11;
-		assignOptional(STARTimes,maxPerSlot,assignmentNumber,preRestrictions,maxPerVol,duration);
+		assignOptional(roveTimes,maxPerSlot,assignmentNumber,preRestrictions,maxPerVol,duration);
 	}
 	//Assign activity to the array of times. Volunteer must not have any activity from restrictions right before the activity
 	//nor any activity from post_restrictions
@@ -214,50 +222,96 @@ public class dpop {
 	public boolean isClear(int hour, int volunteer) {
 		return dpop[hour][volunteer]==0;
 	}
+	@Override
 	public String toString() {
 		String result="";
 		for(int[] hour: dpop) {
 			for(int volunteerAssignment : hour) {
 				//result+=""+volunteerAssignment;
-				if(volunteerAssignment==0) {
-					result+="------";
-				}
-				if(volunteerAssignment==1) {
-					result+="------";
-				}
-				if(volunteerAssignment==2) {
-					result+="Lunch-";
-				}
-				if(volunteerAssignment==3) {
-					result+="Movie-";
-				}
-				if(volunteerAssignment==4) {
-					result+="Planet";
-				}
-				if(volunteerAssignment==5) {
-					result+="Dinos-";
-				}
-				if(volunteerAssignment==6) {
-					result+="Atrium";
-				}
-				if(volunteerAssignment==7) {
-					result+="STARS-";
-				}
-				if(volunteerAssignment==8) {
-					result+="MEETIN";
-				}
-				if(volunteerAssignment==9) {
-					result+="GREET-";
-				}
-				if(volunteerAssignment==10) {
-					result+="STARS-";
-				}
-				if(volunteerAssignment==1) {
-					result+="ROVE--";
-				}
-				
+				result+=getName(volunteerAssignment);
 			}
 			result+="\n";
+		}
+		return result;
+	}
+	public void export(){
+		String[][] export=new String[dpop.length][dpop[0].length];
+		for(int i=0;i<dpop.length;i++) {
+			for(int a=0;a<dpop[0].length;a++) {
+				export[i][a]=getName(dpop[i][a]);
+			}
+		}
+		Workbook wb;
+		wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet("DPOP");
+		Row row;
+		Cell cell;
+		int rownum = 1;
+		for (int i = 0; i < export.length; i++, rownum++) {
+			row = sheet.createRow(rownum);
+			for (int j = 0; j < export[i].length; j++) {
+				cell = row.createCell(j);
+				cell.setCellValue(export[i][j]);
+			}
+		}
+		File file = new File("dpop.xls");
+		if (!file.exists()) {
+		     try {
+				file.createNewFile();
+			} catch (IOException e) {
+				System.out.println("ERROR trying to create file");
+			}
+		  }
+		try (FileOutputStream out = new FileOutputStream(file)) {
+            System.out.println("OUTPUTING FILE");
+			wb.write(out);
+        } catch (IOException e) {
+        	System.out.println("ERROR Trying to write");
+        }
+		try {
+			wb.close();
+		} catch (IOException e){
+			System.out.println("ERROR TRING TO CLOSE");
+		}
+       
+	}
+	public String getName(int volunteerAssignment) {
+		String result="";
+		if(volunteerAssignment==0) {
+			result+="------";
+		}
+		if(volunteerAssignment==1) {
+			result+="------";
+		}
+		if(volunteerAssignment==2) {
+			result+="Lunch-";
+		}
+		if(volunteerAssignment==3) {
+			result+="Movie-";
+		}
+		if(volunteerAssignment==4) {
+			result+="Planet";
+		}
+		if(volunteerAssignment==5) {
+			result+="Dinos-";
+		}
+		if(volunteerAssignment==6) {
+			result+="Atrium";
+		}
+		if(volunteerAssignment==7) {
+			result+="STARS-";
+		}
+		if(volunteerAssignment==8) {
+			result+="MEETIN";
+		}
+		if(volunteerAssignment==9) {
+			result+="GREET-";
+		}
+		if(volunteerAssignment==10) {
+			result+="STARS-";
+		}
+		if(volunteerAssignment==11) {
+			result+="ROVE--";
 		}
 		return result;
 	}
