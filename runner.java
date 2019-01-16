@@ -27,6 +27,8 @@ public class runner {
 		ben.STARS();
 		ben.greet();
 		ben.atrium();
+		ben.ROVE();
+		ben.export();
 		//ben.movie();
 		//ben.planet();
 		//ben.atrium();
