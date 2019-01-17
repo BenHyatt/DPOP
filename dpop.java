@@ -1,11 +1,12 @@
 import org.apache.poi.ss.usermodel.*;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.SimpleDateFormat;  
+import java.util.Date;  
 
 public class dpop {
 	int dpop[][];
@@ -88,7 +89,7 @@ public class dpop {
 	public void STARS() {
 		int[] preRestrictions= {10};
 		int maxPerSlot=2;
-		int maxPerVol=4;
+		int maxPerVol=2;
 		int duration=2;//two slots so 60 minutes
 		assignOptional(STARTimes,maxPerSlot,10,preRestrictions,maxPerVol,duration);
 	}
@@ -238,21 +239,120 @@ public class dpop {
 		String[][] export=new String[dpop.length][dpop[0].length];
 		for(int i=0;i<dpop.length;i++) {
 			for(int a=0;a<dpop[0].length;a++) {
-				export[i][a]=getName(dpop[i][a]);
+				if(i>1&&i%2==1&&dpop[i-1][a]==dpop[i][a]){
+					export[i][a]="|";
+				}else {
+					export[i][a]=getName(dpop[i][a]);
+				}
 			}
 		}
 		Workbook wb;
 		wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("DPOP");
+		
+		CellStyle cellStyle = wb.createCellStyle();
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		
+		CellStyle atrium=wb.createCellStyle();
+		atrium.setAlignment(HorizontalAlignment.CENTER);
+		atrium.setFillBackgroundColor(IndexedColors.LAVENDER.getIndex());
+		atrium.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		CellStyle planet=wb.createCellStyle();
+		planet.setAlignment(HorizontalAlignment.CENTER);
+		planet.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+		planet.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		CellStyle movie=wb.createCellStyle();
+		movie.setAlignment(HorizontalAlignment.CENTER);
+		movie.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+		movie.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		CellStyle dinos=wb.createCellStyle();
+		dinos.setAlignment(HorizontalAlignment.CENTER);
+		dinos.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
+		dinos.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		CellStyle lunch=wb.createCellStyle();
+		lunch.setAlignment(HorizontalAlignment.CENTER);
+		lunch.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+		lunch.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		CellStyle greet=wb.createCellStyle();
+		greet.setAlignment(HorizontalAlignment.CENTER);
+		greet.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+		greet.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
 		Row row;
 		Cell cell;
-		int rownum = 1;
+		
+		row=sheet.createRow(0);
+			cell=row.createCell(1);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue("Guest Services Volunteers");
+			
+			//sheet.addMergedRegion(new CellRangeAddress(0,0,1,3));
+			
+			cell = row.createCell(4);
+			cell.setCellStyle(cellStyle);
+			Date now = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("MMM-d"); 
+			cell.setCellValue(formatter.format(now));
+			
+			cell = row.createCell(5);
+			cell.setCellStyle(cellStyle);
+			formatter = new SimpleDateFormat("EEEEEEEEEEEE"); 
+			cell.setCellValue(formatter.format(now));
+
+		row=sheet.createRow(1);
+			cell=row.createCell(0);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue("Name");
+		
+		row=sheet.createRow(2);
+			cell=row.createCell(0);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue("Shift");
+		
+		row=sheet.createRow(3);
+			cell=row.createCell(0);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue("Notes");
+			
+			
+		String activityName="";	
+		int rownum = 4;
 		for (int i = 0; i < export.length; i++, rownum++) {
 			row = sheet.createRow(rownum);
+			cell = row.createCell(0);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue(clockTime(i));
 			for (int j = 0; j < export[i].length; j++) {
-				cell = row.createCell(j);
+				cell = row.createCell(j+1);
 				cell.setCellValue(export[i][j]);
+				if(export[i][j].equals("|")){
+					activityName=export[i-1][j];
+				}else {
+					activityName=export[i][j];
+				}
+				cell.setCellStyle(cellStyle);
+				if(activityName.equals("Planet"))
+					cell.setCellStyle(planet);
+				if(activityName.equals("Movie"))
+					cell.setCellStyle(movie);
+				if(activityName.equals("Atrium"))
+					cell.setCellStyle(atrium);
+				if(activityName.equals("Dinos"))
+					cell.setCellStyle(dinos);
+				if(activityName.equals("Greet"))
+					cell.setCellStyle(greet);
+				if(activityName.equals("Lunch"))
+					cell.setCellStyle(lunch);
+				
 			}
+			cell = row.createCell(export[i].length+1);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue(clockTime(i));
 		}
 		File file = new File("dpop.xls");
 		if (!file.exists()) {
@@ -275,6 +375,22 @@ public class dpop {
 		}
        
 	}
+	public String clockTime(int i) {
+		String time="";
+		double k;
+		if(i*.5+9>12.5) {
+			k=(i*.5+9)-12;
+		}else {
+			k=(i*.5+9);
+		}
+		if(k%1!=0) {
+			time=Math.round(Math.floor(k))+":30";
+		}else {
+			time=Math.round(Math.floor(k))+":00";
+		}
+		return time;
+		
+	}
 	public String getName(int volunteerAssignment) {
 		String result="";
 		if(volunteerAssignment==0) {
@@ -284,34 +400,34 @@ public class dpop {
 			result+="------";
 		}
 		if(volunteerAssignment==2) {
-			result+="Lunch-";
+			result+="Lunch";
 		}
 		if(volunteerAssignment==3) {
-			result+="Movie-";
+			result+="Movie";
 		}
 		if(volunteerAssignment==4) {
 			result+="Planet";
 		}
 		if(volunteerAssignment==5) {
-			result+="Dinos-";
+			result+="Dinos";
 		}
 		if(volunteerAssignment==6) {
 			result+="Atrium";
 		}
 		if(volunteerAssignment==7) {
-			result+="STARS-";
+			result+="STARS";
 		}
 		if(volunteerAssignment==8) {
-			result+="MEETIN";
+			result+="Meeting";
 		}
 		if(volunteerAssignment==9) {
-			result+="GREET-";
+			result+="Greet";
 		}
 		if(volunteerAssignment==10) {
-			result+="STARS-";
+			result+="STARS";
 		}
 		if(volunteerAssignment==11) {
-			result+="ROVE--";
+			result+="Rove";
 		}
 		return result;
 	}
