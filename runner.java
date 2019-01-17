@@ -34,9 +34,10 @@ public class runner {
 		//ben.atrium();
 		JOptionPane.showMessageDialog(
 			frame,
-			ben,
+			"Finished exporting",
 			title,
 			JOptionPane.PLAIN_MESSAGE
 		);
+		System.exit(0);
 	}
 }
