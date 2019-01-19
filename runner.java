@@ -1,24 +1,58 @@
 import javax.swing.*;
+import java.io.File;
+
+
 public class runner {
 	public static void main(String[] args) {
-		JFrame frame=new JFrame("DPOP Pro");
-		final String title="DPOP Crafter Pro";
-		int closeTime=Integer.parseInt(JOptionPane.showInputDialog(
-			frame,
-			"Welcome to DPOP Pro.\nAt which hour does COSI close today?\nUse military time (i.e.), 5:00 is \"17\".",
-			title,
-			JOptionPane.PLAIN_MESSAGE
-		));
-		int numVolunteers=Integer.parseInt(JOptionPane.showInputDialog(
-			frame,
-			"How many volunteers are scheduled today?",
-			title,
-			JOptionPane.PLAIN_MESSAGE	
-		));
-		int[][] baseDPOP=new int[(closeTime-9)*2][numVolunteers];
-		dpop ben=new dpop(baseDPOP, closeTime);
-		ben.meeting();
+		final String title = "DPOP Crafter Extreme";
+		JFrame frame = new JFrame(title);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		int closeTime = 17;
+		int numVolunteers = Integer.parseInt(JOptionPane.showInputDialog(frame,
+				"How many volunteers are scheduled today?", title, JOptionPane.PLAIN_MESSAGE));
+		String volName;
+		int volStart;
+		int volEnd;
+		final String[] startChoices = { "9", "10", "11", "12", "13" };
+		final String[] endChoices = { "17", "13", "14", "15", "16", "17" };
+		int[][] baseDPOP = new int[(closeTime - 9) * 2][numVolunteers];
+		String[] volNames = new String[numVolunteers];
+		for (int i = 0; i < numVolunteers; i++) {
+			volName = JOptionPane.showInputDialog(frame, "What is this volunteer's name?\nOn person " + (i+1) + "/" + numVolunteers, title,
+					JOptionPane.PLAIN_MESSAGE);
+			volNames[i] = volName;
+			volStart = Integer
+					.parseInt((String) JOptionPane.showInputDialog(frame, "When does " + volName + " begin work today?\nOn person " + (i+1) + "/" + numVolunteers,
+							title, JOptionPane.PLAIN_MESSAGE, null, startChoices, 0));
+			volEnd = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
+					"When does " + volName + " leave today?\nOn person " + (i+1) + "/" + numVolunteers, title, JOptionPane.PLAIN_MESSAGE, null, endChoices, 4));
+			// System.out.println(volName + " starts at " + volStart + " and ends at " +
+			// volEnd);
+			for (int time = ((volStart - 9) * 2); time < ((volEnd - 9) * 2); time++) {
+				baseDPOP[time][i] = 1;
+			}
+		}
+		String fileName = "dpop.xls";
+		File file = new File(fileName);
+		if (file.exists()) {
+			String choice = "a";
+			while (!choice.equals("yes") && !choice.equals("no")) {
+				choice = JOptionPane.showInputDialog(frame,
+						"dpop.xls already exists, would you like to overwrite? \"yes\" or \"no\"", title,
+						JOptionPane.PLAIN_MESSAGE);
+			}
+			if (choice.equals("yes")) {
+				file = new File(fileName);
+			} else {
+				fileName = JOptionPane.showInputDialog(frame,
+						"What would you like to name it? File extension must be \".xls\"", title,
+						JOptionPane.PLAIN_MESSAGE);
+			}
+		}
+		dpop ben = new dpop(baseDPOP, closeTime,volNames);
 		ben.lunch();
+		ben.meeting();
 		ben.movie();
 		ben.planet();
 		ben.dinos();
@@ -28,16 +62,19 @@ public class runner {
 		ben.greet();
 		ben.atrium();
 		ben.ROVE();
-		ben.export();
-		//ben.movie();
-		//ben.planet();
-		//ben.atrium();
-		JOptionPane.showMessageDialog(
-			frame,
-			"Finished exporting",
-			title,
-			JOptionPane.PLAIN_MESSAGE
-		);
+		ben.helpLoadPlanet();
+		ben.helpLoadMovie();
+		if(!ben.fairCheck().equals("")) {
+			JOptionPane.showMessageDialog(frame, ben.fairCheck(), title, JOptionPane.PLAIN_MESSAGE);
+		}
+		if(!ben.emptyCheck().equals("")) {
+			JOptionPane.showMessageDialog(frame, ben.emptyCheck(), title, JOptionPane.PLAIN_MESSAGE);
+		}
+		export dpop = new export(ben.output(), volNames, fileName);
+		dpop.process();
+		dpop.toExcel();
+		JOptionPane.showMessageDialog(frame, "DPOP has been generated!", title, JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(frame, "Need help for:\n" + ben.returnHelp(), title, JOptionPane.PLAIN_MESSAGE);
 		System.exit(0);
 	}
 }
