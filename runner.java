@@ -17,7 +17,7 @@ public class runner {
 		Scanner scanner;
 		do {
 			input = (String) JOptionPane.showInputDialog(frame,
-					"Welcome to DPOP Crafter Extreme!\n\nHow many volunteers are scheduled today?", title,
+					"Welcome to DPOP Crafter Extreme!\nHow many volunteers are scheduled today?", title,
 					JOptionPane.PLAIN_MESSAGE, icon, null, null);
 			scanner = new Scanner(input);
 			while (!scanner.hasNextInt() && scanner.hasNext()) {
@@ -86,7 +86,7 @@ public class runner {
 						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " begin work today?",
 								title, JOptionPane.PLAIN_MESSAGE, icon, startChoices, 0));
 				volEnd = Integer.parseInt(
-						(String) JOptionPane.showInputDialog(frame, "When does " + volNames[i] + " leave today?", title,
+						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " leave today?", title,
 								JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17"));
 				for (int x = 0; x < baseDPOP.length; x++) {
 					baseDPOP[x][i] = 0;
@@ -103,7 +103,7 @@ public class runner {
 			}
 			do {
 				choice = (String) JOptionPane.showInputDialog(frame,
-						"Your data is:\n\n" + message + "\nWould you like to edit any? \"yes\" or \"no\"", title,
+						"Your data is:\n\n" + message + "\nWould you like to edit anthing else? \"yes\" or \"no\"", title,
 						JOptionPane.PLAIN_MESSAGE, icon, null, null);
 			} while (!(choice.equals("no") || choice.equals("yes")));
 		}
@@ -138,16 +138,21 @@ public class runner {
 		ben.ROVE();
 		ben.helpLoadPlanet();
 		ben.helpLoadMovie();
+		message="";
 		if (!ben.fairCheck().equals("")) {
 			JOptionPane.showMessageDialog(frame, ben.fairCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
+		}else {
+			message+="\nAdditionally, our AI fairness checker has determined that dino doors have been evenly distributed.";
 		}
 		if (!ben.emptyCheck().equals("")) {
 			JOptionPane.showMessageDialog(frame, ben.emptyCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
+		}else {
+			message+="\nAlso, Our AI algorithm has confirmed that everyone has something to do throughout their time volunteering";
 		}
 		export dpop = new export(ben.output(), volNames, fileName, startEndTimes);
 		dpop.process();
 		dpop.toExcel();
-		JOptionPane.showMessageDialog(frame, "Your DPOP has been generated at " + fileName, title,
+		JOptionPane.showMessageDialog(frame, "Your DPOP has been generated at " + fileName + message, title,
 				JOptionPane.PLAIN_MESSAGE, icon);
 		JOptionPane.showMessageDialog(frame, "You need help for:\n" + ben.returnHelp(), title,
 				JOptionPane.PLAIN_MESSAGE, icon);
