@@ -11,12 +11,14 @@ public class export {
 	String[][] export;
 	String[] volNames;
 	String fileName;
+	String[] startEndTimes;
 
-	public export(int[][] schedule, String[] names, String file) {
+	public export(int[][] schedule, String[] names, String file, String[] startEnd) {
 		dpop = schedule;
 		export = new String[dpop.length + 1][dpop[0].length];
 		volNames = names;
 		fileName = file;
+		startEndTimes = startEnd;
 	}
 
 	public void process() {
@@ -129,6 +131,11 @@ public class export {
 		cell = row.createCell(0);
 		cell.setCellStyle(cellStyle);
 		cell.setCellValue("Shift");
+		for (int i = 0; i < startEndTimes.length; i++) {
+			cell = row.createCell(i + 1);
+			cell.setCellStyle(cellStyle);
+			cell.setCellValue(startEndTimes[i]);
+		}
 
 		row = sheet.createRow(3);
 		cell = row.createCell(0);
