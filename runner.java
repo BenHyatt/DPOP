@@ -86,8 +86,8 @@ public class runner {
 						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " begin work today?",
 								title, JOptionPane.PLAIN_MESSAGE, icon, startChoices, 0));
 				volEnd = Integer.parseInt(
-						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " leave today?", title,
-								JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17"));
+						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " leave today?",
+								title, JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17"));
 				for (int x = 0; x < baseDPOP.length; x++) {
 					baseDPOP[x][i] = 0;
 				}
@@ -103,8 +103,8 @@ public class runner {
 			}
 			do {
 				choice = (String) JOptionPane.showInputDialog(frame,
-						"Your data is:\n\n" + message + "\nWould you like to edit anthing else? \"yes\" or \"no\"", title,
-						JOptionPane.PLAIN_MESSAGE, icon, null, null);
+						"Your data is:\n\n" + message + "\nWould you like to edit anthing else? \"yes\" or \"no\"",
+						title, JOptionPane.PLAIN_MESSAGE, icon, null, null);
 			} while (!(choice.equals("no") || choice.equals("yes")));
 		}
 		choice = "";
@@ -138,16 +138,16 @@ public class runner {
 		ben.ROVE();
 		ben.helpLoadPlanet();
 		ben.helpLoadMovie();
-		message="";
+		message = "";
 		if (!ben.fairCheck().equals("")) {
 			JOptionPane.showMessageDialog(frame, ben.fairCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
-		}else {
-			message+="\nAdditionally, our AI fairness checker has determined that dino doors have been evenly distributed.";
+		} else {
+			message += "\nAdditionally, our AI fairness checker has determined that dino doors have been evenly distributed.";
 		}
 		if (!ben.emptyCheck().equals("")) {
 			JOptionPane.showMessageDialog(frame, ben.emptyCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
-		}else {
-			message+="\nAlso, Our AI algorithm has confirmed that everyone has something to do throughout their time volunteering";
+		} else {
+			message += "\nAlso, Our AI algorithm has confirmed that everyone has something to do throughout their time volunteering";
 		}
 		export dpop = new export(ben.output(), volNames, fileName, startEndTimes);
 		dpop.process();
