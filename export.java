@@ -56,13 +56,13 @@ public class export {
 				}
 			}
 		}
+
 	}
 
 	public void toExcel() {
 		Workbook wb;
 		wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("DPOP");
-
 		CellStyle cellStyle = wb.createCellStyle();
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
@@ -95,6 +95,11 @@ public class export {
 		greet.setAlignment(HorizontalAlignment.CENTER);
 		greet.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
 		greet.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		CellStyle amnh = wb.createCellStyle();
+		amnh.setAlignment(HorizontalAlignment.CENTER);
+		amnh.setFillForegroundColor(IndexedColors.PLUM.getIndex());
+		amnh.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 		Row row;
 		Cell cell;
@@ -173,7 +178,8 @@ public class export {
 					cell.setCellStyle(greet);
 				if (activityName.equals("Lunch"))
 					cell.setCellStyle(lunch);
-
+				if (activityName.equals("AMNH Doors"))
+					cell.setCellStyle(amnh);
 			}
 			cell = row.createCell(export[i].length + 1);
 			cell.setCellStyle(cellStyle);
@@ -202,6 +208,7 @@ public class export {
 
 	public String getName(int volunteerAssignment) {
 		String result = "";
+		String[] roveOptions = { " Progress", " Gadgets", " Life", " Dinos", " Energy" };
 		if (volunteerAssignment == 0) {
 			result += "xxxx";
 		}
@@ -236,13 +243,16 @@ public class export {
 			result += "STARS";
 		}
 		if (volunteerAssignment == 11) {
-			result += "Rove";
+			result += "Rove" + roveOptions[(int) (Math.random() * roveOptions.length)];
 		}
 		if (volunteerAssignment == 12) {
 			result += "Load Movie";
 		}
 		if (volunteerAssignment == 13) {
 			result += "Load Planet";
+		}
+		if (volunteerAssignment == 14) {
+			result += "AMNH Doors";
 		}
 		return result;
 	}
