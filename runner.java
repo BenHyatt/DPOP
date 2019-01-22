@@ -25,7 +25,7 @@ public class runner {
 			}
 			if (scanner.hasNextInt())
 				numVolunteers = scanner.nextInt();
-		} while (!(numVolunteers >= 1));
+		} while (!(numVolunteers >= 1 && numVolunteers <= 25));
 		scanner.close();
 
 		String volName;
@@ -41,14 +41,21 @@ public class runner {
 					"What is this volunteer's name?\nOn person " + (i + 1) + "/" + numVolunteers, title,
 					JOptionPane.PLAIN_MESSAGE, icon, null, null);
 			volNames[i] = volName;
-			volStart = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
-					"When does " + volName + " begin work today?\nOn person " + (i + 1) + "/" + numVolunteers, title,
-					JOptionPane.PLAIN_MESSAGE, icon, startChoices, 0));
-			volEnd = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
-					"When does " + volName + " leave today?\nOn person " + (i + 1) + "/" + numVolunteers, title,
-					JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17"));
-			// System.out.println(volName + " starts at " + volStart + " and ends at " +
-			// volEnd);
+
+			// In beta
+			volEnd = 17;
+			volStart = 9;
+			/*
+			 * volStart = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
+			 * "When does " + volName + " begin work today?\nOn person " + (i + 1) + "/" +
+			 * numVolunteers, title, JOptionPane.PLAIN_MESSAGE, icon, startChoices, 0));
+			 * volEnd = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
+			 * "When does " + volName + " leave today?\nOn person " + (i + 1) + "/" +
+			 * numVolunteers, title, JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17")); //
+			 * System.out.println(volName + " starts at " + volStart + " and ends at " + //
+			 * volEnd);
+			 */
+
 			for (int time = ((volStart - 9) * 2); time < ((volEnd - 9) * 2); time++) {
 				baseDPOP[time][i] = 1;
 			}
@@ -62,6 +69,9 @@ public class runner {
 			choice = (String) JOptionPane.showInputDialog(frame,
 					"Your data is:\n\n" + message + "\nWould you like to edit any? \"yes\" or \"no\"", title,
 					JOptionPane.PLAIN_MESSAGE, icon, null, null);
+			if (choice == null) {
+				System.exit(0);
+			}
 		}
 		String userChoice;
 		while (choice.equals("yes")) {
@@ -130,6 +140,7 @@ public class runner {
 		ben.movie();
 		ben.planet();
 		ben.dinos();
+		// ben.amnh();
 		ben.movieSecond();
 		ben.planetSecond();
 		ben.STARS();
