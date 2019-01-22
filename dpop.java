@@ -8,6 +8,7 @@ public class dpop {
 	int[] movieTimes = { 12, 13, 14, 15 };
 	int[] planetTimes = { 11, 12, 13, 14, 15, 16 };
 	int[] dinoTimes = { 10, 11, 12, 13, 14, 15, 16 };
+	int[] amnhTimes = { 10, 11, 12, 13, 14, 15, 16 };
 	double[] greetTimes = { 10, 10.5 };
 	double[] atriumTimes = { 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5 };
 	double[] STARTimes = { 10, 11, 12, 13, 14, 15, 16 };
@@ -111,6 +112,12 @@ public class dpop {
 		assignNecessary(dinoTimes, 5, pre_restrictions, post_restrictions);
 	}
 
+	public void amnh() {
+		int[] pre_restrictions = { 5, 14 };
+		int[] post_restrictions = { 3 };
+		assignNecessary(amnhTimes, 14, pre_restrictions, post_restrictions);
+	}
+
 	public void greet() {
 		int[] prerestrictions = { 9 };
 		int maxPerSlot = 3;
@@ -136,7 +143,7 @@ public class dpop {
 	}
 
 	public void ROVE() {
-		int[] preRestrictions = {};
+		int[] preRestrictions = { 11 };
 		int maxPerSlot = 3;
 		int maxPerVol = 2;
 		int duration = 1;
@@ -220,17 +227,36 @@ public class dpop {
 
 	public void addHelp(int spot, int activity) {
 		if (activity == 3) {
-			help[spot][1] = "Movie-";
-			help[spot + 1][1] = "Movie-";
+			help[spot][3] = "Movie-";
+			help[spot + 1][3] = "Movie-";
 		}
 		if (activity == 4) {
 			help[spot][2] = "Planet";
 			help[spot + 1][2] = "Planet";
 		}
 		if (activity == 5) {
-			help[spot][0] = "Dinos-";
-			help[spot + 1][0] = "Dinos-";
+			help[spot][1] = "Dinos-";
+			help[spot + 1][1] = "Dinos";
 		}
+		if (activity == 14) {
+			help[spot][0] = "AMNH-";
+			help[spot + 1][0] = "AMNH-";
+		}
+	}
+
+	public String returnHelp() {
+		String result = "";
+		for (String[] hour : help) {
+			for (String assignment : hour) {
+				if (assignment == null) {
+					result += "------";
+				} else {
+					result += assignment;
+				}
+			}
+			result += "\n";
+		}
+		return result;
 	}
 
 	public void assignOptional(double[] possibleTimes, int MaxPerSlot, int activity, int[] pre_restrictions, int maxDay,
@@ -307,21 +333,6 @@ public class dpop {
 		return dpop[hour][volunteer] == 1;
 	}
 
-	public String returnHelp() {
-		String result = "";
-		for (String[] hour : help) {
-			for (String assignment : hour) {
-				if (assignment == null) {
-					result += "------";
-				} else {
-					result += assignment;
-				}
-			}
-			result += "\n";
-		}
-		return result;
-	}
-
 	public int[][] output() {
 		return dpop;
 	}
@@ -333,7 +344,7 @@ public class dpop {
 		String minVol = "";
 		int currentAmount;
 		for (int i = 0; i < numVolunteers; i++) {
-			currentAmount = findAmount(i, 5);
+			currentAmount = findAmount(i, 5)+findAmount(i,14);
 			if (currentAmount > max) {
 				max = currentAmount;
 				maxVol = volNames[i];
