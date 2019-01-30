@@ -18,21 +18,23 @@ public class dpop {
 	int numVolunteers;
 	String[] volNames;
 	int minTime;
+	int closeTime;
 
 	public dpop() {
 
 	}
 
-	public dpop(int[][] x, int closeTime, String[] names) {
+	public dpop(int[][] x, int y, String[] names) {
 		dpop = x;
+		closeTime = y;
 		numVolunteers = dpop[0].length;
-		help = new String[(closeTime - 9) * 2][3];
+		help = new String[(closeTime - 9) * 2][4];
 		volNames = names;
 	}
 
 	public void lunch() {
 		int[] x = { -1, 0, 1 };
-		int[] y = { -2, 0, 2 };
+		// int[] y = { -2, 0, 2 };
 		// Add a lunch for everyone on the DPOP
 		int shiftLength;
 		int middleTime;
@@ -46,8 +48,10 @@ public class dpop {
 				if (middleTime % 2 == 1) {
 					middleTime--;
 				}
-				dpop[y[i % y.length] + middleTime][i] = 2;
-				dpop[(y[i % y.length] + middleTime) + 1][i] = 2;
+				// dpop[y[i % y.length] + middleTime][i] = 2;
+				// dpop[(y[i % y.length] + middleTime) + 1][i] = 2;
+				dpop[middleTime][i] = 2;
+				dpop[middleTime + 1][i] = 2;
 			} else if (shiftLength >= 8) {
 				dpop[x[i % x.length] + middleTime(i)][i] = 2;
 			}
@@ -115,7 +119,7 @@ public class dpop {
 
 	public void amnh() {
 		int[] pre_restrictions = { 5, 14 };
-		int[] post_restrictions = { 3 };
+		int[] post_restrictions = { 3, 5 };
 		assignNecessary(amnhTimes, 14, pre_restrictions, post_restrictions);
 	}
 
@@ -234,15 +238,9 @@ public class dpop {
 				}
 				// Find best volunteer from all who have min amount
 				// Finds the volunteer who hasn't had the activity for the longest time
-				// System.out.println("\nAssigning the " + i + " activity " + activity + "
-				// someone has this activity "+ min_amount + " times");
-				System.out.println("Eligible volunteers are: " + possibleVolunteers);
-				System.out.println("Eligible volunteers2 are: " + possibleVolunteers2);
 				if (possibleVolunteers2.size() > 1) {
 					minTime = 99999;
 					for (int vol : possibleVolunteers2) {
-						// System.out.println("Volunteer " + vol + " has last had " + activity + " at "
-						// + getLatest(vol, activity) + " minTime is " + minTime);
 						if (getLatest(vol, activity) < minTime) {
 							currentVolunteer = vol;
 							minTime = getLatest(vol, activity);
@@ -252,7 +250,6 @@ public class dpop {
 				dpop[time(times[i])][currentVolunteer] = activity;
 				dpop[time(times[i] + .5)][currentVolunteer] = activity;
 			} else {
-				// System.out.println("HELP: " + times[i] + " for " + activity);
 				addHelp(time(times[i]), activity);
 			}
 
@@ -261,20 +258,20 @@ public class dpop {
 
 	public void addHelp(int spot, int activity) {
 		if (activity == 3) {
-			help[spot][2] = "Movie-";
-			help[spot + 1][2] = "Movie-";
+			help[spot][3] = "Movie-";
+			help[spot + 1][3] = "Movie-";
 		}
 		if (activity == 4) {
-			help[spot][1] = "Planet";
-			help[spot + 1][1] = "Planet";
+			help[spot][2] = "Planet";
+			help[spot + 1][2] = "Planet";
 		}
 		if (activity == 5) {
-			help[spot][0] = "Dinos-";
-			help[spot + 1][0] = "Dinos";
+			help[spot][1] = "Dinos-";
+			help[spot + 1][1] = "Dinos";
 		}
 		if (activity == 14) {
-			help[spot][3] = "AMNH-";
-			help[spot + 1][3] = "AMNH-";
+			help[spot][0] = "AMNH-";
+			help[spot + 1][0] = "AMNH-";
 		}
 	}
 
@@ -333,25 +330,28 @@ public class dpop {
 	}
 
 	public void meeting() {
-		for (int i = 0; i < dpop[0].length; i++) {
-			if (dpop[0][i] == 1) {
+		for (int i = 0; i < dpop[0].length; i++)
+			if (dpop[0][i] == 1)
 				dpop[0][i] = 8;
-			}
-		}
-		for (int i = 0; i < dpop[0].length; i++) {
-			if (dpop[1][i] == 1) {
+		for (int i = 0; i < dpop[0].length; i++)
+			if (dpop[1][i] == 1)
 				dpop[1][i] = 8;
-			}
-		}
+	}
+
+	public void reset() {
+		for (int x = 0; x < dpop[0].length; x++)
+			for (int y = 0; y < dpop.length; y++)
+				if (dpop[y][x] > 0)
+					dpop[y][x] = 1;
+		help = new String[(closeTime - 9) * 2][4];
 	}
 
 	// Assumes volunteer has activity
 	public int getLatest(int vol, int activity) {
 		int latest = 0;
-		for (int i = 0; i < dpop.length; i++) {
+		for (int i = 0; i < dpop.length; i++)
 			if (dpop[i][vol] == activity)
 				latest = i;
-		}
 		return latest;
 	}
 
@@ -403,7 +403,7 @@ public class dpop {
 		if (max - min > 2) {
 			return ("Oops... an injustice has been detected!\n" + maxVol + " has " + (max / 2)
 					+ " hours of doors\nWhile " + minVol + " has " + (min / 2)
-					+ " hours of doors\nYou must investigate manually (autofix in development)\nPress \"OK\" to acknowledge the problem and generate the DPOP");
+					+ " hours of doors\nYou must investigate manually; DPOP Crafter Extreme has done all it can to fix the problem\nPress \"OK\" to acknowledge the problem and generate the DPOP");
 		} else {
 			return "";
 		}
