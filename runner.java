@@ -42,19 +42,8 @@ public class runner {
 					JOptionPane.PLAIN_MESSAGE, icon, null, null);
 			volNames[i] = volName;
 
-			// In beta
 			volEnd = 17;
 			volStart = 9;
-			/*
-			 * volStart = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
-			 * "When does " + volName + " begin work today?\nOn person " + (i + 1) + "/" +
-			 * numVolunteers, title, JOptionPane.PLAIN_MESSAGE, icon, startChoices, 0));
-			 * volEnd = Integer.parseInt((String) JOptionPane.showInputDialog(frame,
-			 * "When does " + volName + " leave today?\nOn person " + (i + 1) + "/" +
-			 * numVolunteers, title, JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17")); //
-			 * System.out.println(volName + " starts at " + volStart + " and ends at " + //
-			 * volEnd);
-			 */
 
 			for (int time = ((volStart - 9) * 2); time < ((volEnd - 9) * 2); time++) {
 				baseDPOP[time][i] = 1;
@@ -62,9 +51,8 @@ public class runner {
 			startEndTimes[i] = clockTime((volStart - 9) * 2) + "-" + clockTime((volEnd - 9) * 2);
 		}
 		String message = "";
-		for (int i = 0; i < volNames.length; i++) {
+		for (int i = 0; i < volNames.length; i++)
 			message += volNames[i] + " here " + startEndTimes[i] + "\n";
-		}
 		while (!choice.equals("yes") && !choice.equals("no")) {
 			choice = (String) JOptionPane.showInputDialog(frame,
 					"Your data is:\n\n" + message + "\nWould you like to edit any? \"yes\" or \"no\"", title,
@@ -74,6 +62,7 @@ public class runner {
 			}
 		}
 		String userChoice;
+		// Begin editing the data
 		while (choice.equals("yes")) {
 			do {
 				userChoice = (String) JOptionPane.showInputDialog(frame,
@@ -98,19 +87,16 @@ public class runner {
 				volEnd = Integer.parseInt(
 						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " leave today?",
 								title, JOptionPane.PLAIN_MESSAGE, icon, endChoices, "17"));
-				for (int x = 0; x < baseDPOP.length; x++) {
+				for (int x = 0; x < baseDPOP.length; x++)
 					baseDPOP[x][i] = 0;
-				}
-				for (int time = ((volStart - 9) * 2); time < ((volEnd - 9) * 2); time++) {
+				for (int time = ((volStart - 9) * 2); time < ((volEnd - 9) * 2); time++)
 					baseDPOP[time][i] = 1;
-				}
 				startEndTimes[i] = clockTime((volStart - 9) * 2) + "-" + clockTime((volEnd - 9) * 2);
 			}
 			message = "";
-			// System.out.println("REGENERATING message");
-			for (int a = 0; a < volNames.length; a++) {
+			// Regenerate message
+			for (int a = 0; a < volNames.length; a++)
 				message += volNames[a] + " here " + startEndTimes[a] + "\n";
-			}
 			do {
 				choice = (String) JOptionPane.showInputDialog(frame,
 						"Your data is:\n\n" + message + "\nWould you like to edit anthing else? \"yes\" or \"no\"",
@@ -135,20 +121,14 @@ public class runner {
 
 		} while (file.exists() && choice.equals("no"));
 		dpop ben = new dpop(baseDPOP, closeTime, volNames);
-		ben.lunch();
-		ben.meeting();
-		ben.movie();
-		ben.planet();
-		ben.dinos();
-		// ben.amnh();
-		ben.movieSecond();
-		ben.planetSecond();
-		ben.STARS();
-		ben.greet();
-		ben.atrium();
-		ben.ROVE();
-		ben.helpLoadPlanet();
-		ben.helpLoadMovie();
+		generate(ben);
+		int cnt = 0;
+		while (!ben.fairCheck().equals("") && cnt < 10) {
+			System.out.println("Regenerating because: " + ben.fairCheck());
+			ben.reset();
+			generate(ben);
+			cnt++;
+		}
 		message = "";
 		if (!ben.fairCheck().equals("")) {
 			JOptionPane.showMessageDialog(frame, ben.fairCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
@@ -168,6 +148,23 @@ public class runner {
 		JOptionPane.showMessageDialog(frame, "You need help for:\n" + ben.returnHelp(), title,
 				JOptionPane.PLAIN_MESSAGE, icon);
 		System.exit(0);
+	}
+
+	public static void generate(dpop ben) {
+		ben.lunch();
+		ben.meeting();
+		ben.movie();
+		ben.planet();
+		ben.dinos();
+		ben.amnh();
+		ben.movieSecond();
+		ben.planetSecond();
+		ben.STARS();
+		ben.greet();
+		ben.atrium();
+		ben.ROVE();
+		ben.helpLoadPlanet();
+		ben.helpLoadMovie();
 	}
 
 	public static String clockTime(int i) {
