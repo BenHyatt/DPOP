@@ -17,6 +17,7 @@ public class dpop {
 	double[] helpLoadPlanet = { 11, 12, 13, 14, 15, 16 };
 	int numVolunteers;
 	String[] volNames;
+	int minTime;
 
 	public dpop() {
 
@@ -62,7 +63,7 @@ public class dpop {
 		while (end < dpop.length && dpop[end][vol] != 0) {
 			end++;
 		}
-		System.out.println("MIddle time of " + vol + " is " + (start + end) / 2);
+		// System.out.println("MIddle time of " + vol + " is " + (start + end) / 2);
 		return (start + end) / 2;
 	}
 
@@ -70,7 +71,7 @@ public class dpop {
 		// Assign all the movie times to a volunteer who doesn't have lunch or doors
 		// before.
 		// 3 represents what the movie task is
-		int[] restrictions = { 5, 2 };
+		int[] restrictions = { 5, 2, 0 };
 		int[] post_restrictions = {};
 		assignNecessary(movieTimes, 3, restrictions, post_restrictions);
 	}
@@ -185,7 +186,9 @@ public class dpop {
 				// If they have this time clear
 				volunteerCounter++;
 				currentVolunteer = (randomStart + volunteerCounter) % numVolunteers;
-				if (isClear(ActivityTime, currentVolunteer) && isClear(ActivityTime + 1, currentVolunteer)) {
+				if (isClear(ActivityTime, currentVolunteer) && isClear(ActivityTime + 1, currentVolunteer)
+				// && (!(volNames[currentVolunteer].equals("Ben") && activity == 5))
+				) {
 					// Assume you've found a volunteer, until you prove false
 					foundVol = true;
 					// Go through restrictions, and if they meet any of them, then realize you
@@ -206,13 +209,44 @@ public class dpop {
 					}
 				}
 			}
+			// What if there are multiple volunteers who have the spot clear for the
+			// activity?
+			// Then, give it to the volunteer who has it the least
+			// If there are multiple are tied for least, give it to who has had it the
+			// longest time ago
+			// If it's the same amount (would happen if 2 people have never had it yet),
+			// give it to the randomly generated seed
 			if (possibleVolunteers.size() > 0) {
 				int min_amount = 99999;
-				// Find best volunteer
-				for (int a = 0; a < possibleVolunteers.size(); a++) {
-					if (findAmount(possibleVolunteers.get(a), activity) < min_amount) {
-						min_amount = findAmount(possibleVolunteers.get(a), activity);
-						currentVolunteer = possibleVolunteers.get(a);
+				// Find volunteer who has minimum amount
+				for (int vol : possibleVolunteers) {
+					if (findAmount(vol, activity) < min_amount) {
+						min_amount = findAmount(vol, activity);
+						currentVolunteer = vol;
+					}
+				}
+				// Find volunteers who have this min amount
+				List<Integer> possibleVolunteers2 = new ArrayList<Integer>();
+				for (int vol : possibleVolunteers) {
+					if (findAmount(vol, activity) == min_amount) {
+						possibleVolunteers2.add(vol);
+					}
+				}
+				// Find best volunteer from all who have min amount
+				// Finds the volunteer who hasn't had the activity for the longest time
+				System.out.println("\nAssigning the " + i + " activity " + activity + " someone has this activity "
+						+ min_amount + " times");
+				System.out.println("Eligible volunteers are: " + possibleVolunteers);
+				System.out.println("Eligible volunteers2 are: " + possibleVolunteers2);
+				if (possibleVolunteers2.size() > 1) {
+					minTime = 99999;
+					for (int vol : possibleVolunteers2) {
+						System.out.println("Volunteer " + vol + " has last had " + activity + " at "
+								+ getLatest(vol, activity) + " minTime is " + minTime);
+						if (getLatest(vol, activity) < minTime) {
+							currentVolunteer = vol;
+							minTime = getLatest(vol, activity);
+						}
 					}
 				}
 				dpop[time(times[i])][currentVolunteer] = activity;
@@ -227,20 +261,20 @@ public class dpop {
 
 	public void addHelp(int spot, int activity) {
 		if (activity == 3) {
-			help[spot][3] = "Movie-";
-			help[spot + 1][3] = "Movie-";
+			help[spot][2] = "Movie-";
+			help[spot + 1][2] = "Movie-";
 		}
 		if (activity == 4) {
-			help[spot][2] = "Planet";
-			help[spot + 1][2] = "Planet";
+			help[spot][1] = "Planet";
+			help[spot + 1][1] = "Planet";
 		}
 		if (activity == 5) {
-			help[spot][1] = "Dinos-";
-			help[spot + 1][1] = "Dinos";
+			help[spot][0] = "Dinos-";
+			help[spot + 1][0] = "Dinos";
 		}
 		if (activity == 14) {
-			help[spot][0] = "AMNH-";
-			help[spot + 1][0] = "AMNH-";
+			help[spot][3] = "AMNH-";
+			help[spot + 1][3] = "AMNH-";
 		}
 	}
 
@@ -311,7 +345,16 @@ public class dpop {
 		}
 	}
 
-	// Return true if a volunteer has an activity right before hour (in time format)
+	// Assumes volunteer has activity
+	public int getLatest(int vol, int activity) {
+		int latest = 0;
+		for (int i = 0; i < dpop.length; i++) {
+			if (dpop[i][vol] == activity)
+				latest = i;
+		}
+		return latest;
+	}
+
 	public int findAmount(int volunteer, int activity) {
 		int cnt = 0;
 		for (int i = 0; i < dpop.length; i++)
@@ -321,6 +364,7 @@ public class dpop {
 		return cnt;
 	}
 
+	// Return true if a volunteer has an activity right before hour (in time format)
 	public boolean haveBefore(int volunteer, int activity, int hour) {
 		return dpop[hour - 1][volunteer] == activity;
 	}
@@ -344,7 +388,9 @@ public class dpop {
 		String minVol = "";
 		int currentAmount;
 		for (int i = 0; i < numVolunteers; i++) {
-			currentAmount = findAmount(i, 5)+findAmount(i,14);
+			// if (volNames[i].equals("Ben"))
+			// continue;
+			currentAmount = findAmount(i, 5) + findAmount(i, 14);
 			if (currentAmount > max) {
 				max = currentAmount;
 				maxVol = volNames[i];
