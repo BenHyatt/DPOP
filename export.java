@@ -194,7 +194,6 @@ public class export {
 			}
 		}
 		try (FileOutputStream out = new FileOutputStream(file)) {
-			System.out.println("OUTPUTING FILE");
 			wb.write(out);
 		} catch (IOException e) {
 			System.out.println("ERROR Trying to write");
