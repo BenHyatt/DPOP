@@ -234,15 +234,15 @@ public class dpop {
 				}
 				// Find best volunteer from all who have min amount
 				// Finds the volunteer who hasn't had the activity for the longest time
-				System.out.println("\nAssigning the " + i + " activity " + activity + " someone has this activity "
-						+ min_amount + " times");
+				// System.out.println("\nAssigning the " + i + " activity " + activity + "
+				// someone has this activity "+ min_amount + " times");
 				System.out.println("Eligible volunteers are: " + possibleVolunteers);
 				System.out.println("Eligible volunteers2 are: " + possibleVolunteers2);
 				if (possibleVolunteers2.size() > 1) {
 					minTime = 99999;
 					for (int vol : possibleVolunteers2) {
-						System.out.println("Volunteer " + vol + " has last had " + activity + " at "
-								+ getLatest(vol, activity) + " minTime is " + minTime);
+						// System.out.println("Volunteer " + vol + " has last had " + activity + " at "
+						// + getLatest(vol, activity) + " minTime is " + minTime);
 						if (getLatest(vol, activity) < minTime) {
 							currentVolunteer = vol;
 							minTime = getLatest(vol, activity);
