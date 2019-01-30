@@ -107,7 +107,7 @@ public class runner {
 				startEndTimes[i] = clockTime((volStart - 9) * 2) + "-" + clockTime((volEnd - 9) * 2);
 			}
 			message = "";
-			System.out.println("REGENERATING message");
+			// System.out.println("REGENERATING message");
 			for (int a = 0; a < volNames.length; a++) {
 				message += volNames[a] + " here " + startEndTimes[a] + "\n";
 			}
