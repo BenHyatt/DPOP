@@ -1,9 +1,12 @@
 import javax.swing.*;
 import java.io.File;
 import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class runner {
 	public static void main(String[] args) {
+
 		String choice = "";
 		final String title = "DPOP Crafter Extreme";
 		JFrame frame = new JFrame(title);
@@ -12,7 +15,6 @@ public class runner {
 		int closeTime = 17;
 		String input;
 		int numVolunteers = -1;
-		;
 		ImageIcon icon = new ImageIcon("logo.png");
 		Scanner scanner;
 		do {
@@ -79,7 +81,7 @@ public class runner {
 			if (userChoice.equals("name")) {
 				volNames[i] = (String) JOptionPane.showInputDialog(frame,
 						"What should\n" + volNames[i] + " who is here " + startEndTimes[i] + " be called?", title,
-						JOptionPane.PLAIN_MESSAGE, icon, null, null);
+						JOptionPane.PLAIN_MESSAGE, icon, null, volNames[i]);
 			} else {
 				volStart = Integer.parseInt(
 						(String) JOptionPane.showInputDialog(frame, "When should " + volNames[i] + " begin work today?",
@@ -109,7 +111,8 @@ public class runner {
 		do {
 			fileName = (String) JOptionPane.showInputDialog(frame,
 					"What would you like to name your file? File extension must be \".xls\"", title,
-					JOptionPane.PLAIN_MESSAGE, icon, null, null);
+					JOptionPane.PLAIN_MESSAGE, icon, null,
+					"GSVol-" + new SimpleDateFormat("MMM-d").format(new Date()) + ".xls");
 			file = new File(fileName);
 			if (file.exists()) {
 				do {
@@ -124,22 +127,28 @@ public class runner {
 		generate(ben);
 		int cnt = 0;
 		while (!ben.fairCheck().equals("") && cnt < 10) {
-			System.out.println("Regenerating because: " + ben.fairCheck());
+			System.out.println("Regenerating becase " + ben.fairCheck());
 			ben.reset();
 			generate(ben);
 			cnt++;
 		}
 		message = "";
 		if (!ben.fairCheck().equals("")) {
-			JOptionPane.showMessageDialog(frame, ben.fairCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
+			message += ben.fairCheck();
 		} else {
-			message += "\nAdditionally, our AI fairness checker has determined that dino doors have been evenly distributed.";
+			message += "\n\nAdditionally, our AI fairness checker has determined that dino doors have been evenly distributed";
 		}
 		if (!ben.emptyCheck().equals("")) {
-			JOptionPane.showMessageDialog(frame, ben.emptyCheck(), title, JOptionPane.PLAIN_MESSAGE, icon);
+			message += ben.emptyCheck();
 		} else {
-			message += "\nAlso, Our AI algorithm has confirmed that everyone has something to do throughout their time volunteering";
+			message += "\n\nAlso, our AI algorithm has confirmed that everyone has something to do throughout their time volunteering";
 		}
+		if (!ben.empathy().equals("")) {
+			message += ben.empathy();
+		} else {
+			message += "\n\nFinally, our AI algorithm has found that no one has more than 2 hours of doors";
+		}
+
 		export dpop = new export(ben.output(), volNames, fileName, startEndTimes);
 		dpop.process();
 		dpop.toExcel();
@@ -156,7 +165,7 @@ public class runner {
 		ben.movie();
 		ben.planet();
 		ben.dinos();
-		ben.amnh();
+		// ben.amnh();
 		ben.movieSecond();
 		ben.planetSecond();
 		ben.STARS();
