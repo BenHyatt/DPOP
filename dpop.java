@@ -403,10 +403,18 @@ public class dpop {
 		if (max - min > 2) {
 			return ("Oops... an injustice has been detected!\n" + maxVol + " has " + (max / 2)
 					+ " hours of doors\nWhile " + minVol + " has " + (min / 2)
-					+ " hours of doors\nYou must investigate manually; DPOP Crafter Extreme has done all it can to fix the problem\nPress \"OK\" to acknowledge the problem and generate the DPOP");
+					+ " hours of doors\nYou must investigate manually; DPOP Crafter Extreme has done all it can to fix the problem");
 		} else {
 			return "";
 		}
+	}
+
+	public String empathy() {
+		String message = "";
+		for (int i = 0; i < numVolunteers; i++)
+			if (findAmount(i, 5) + findAmount(i, 14) > 4)
+				message += volNames[i] + " has " + ((findAmount(i, 5) + findAmount(i, 14)) / 2) + " hours of doors\n";
+		return message;
 	}
 
 	public String emptyCheck() {
@@ -415,7 +423,7 @@ public class dpop {
 		for (int i = 0; i < numVolunteers; i++) {
 			amount = findAmount(i, 1);
 			if (amount > 0) {
-				statement += volNames[i] + " has nothing to do in " + amount + " slot(s)\n";
+				statement += "\n" + volNames[i] + " has nothing to do in " + amount + " slot(s)";
 			}
 		}
 		if (!statement.equals("")) {
